@@ -17,9 +17,9 @@ if False:
         "Asleep":   {"Stay asleep": 1.}
     }
 else:
-    agent = QLearningAgent(mdp.action_space, epsilon=0.5, alpha=0.2, gamma=0.9)
+    agent = QLearningAgent(mdp.action_space, epsilon=1.0, alpha=0.2, gamma=0.9)
 
-while mdp.ep < 100:
+while mdp.ep < 50:
     state = mdp.reset()
     done = False
     while not done:
@@ -28,4 +28,9 @@ while mdp.ep < 100:
         agent.learn(state, action, reward, next_state, done)
         state = next_state
 
+    print("Value function:")
     print(agent.Q)
+    print("Policy:")
+    print(agent.pi)
+    
+    agent.epsilon *= 0.95

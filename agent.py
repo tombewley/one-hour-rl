@@ -46,7 +46,6 @@ class QLearningAgent(Agent):
 
     def learn(self, state, action, reward, next_state, done):
         """Update the value function and policy using information from the latest transition."""
-        self.Q[state][action] += self.alpha * ( reward
-                                              + self.gamma * self.Q[next_state][self.greedy(self.Q[next_state])]
-                                              - self.Q[state][action])
+        Q_next = 0. if done else self.Q[next_state][self.greedy(self.Q[next_state])]
+        self.Q[state][action] += self.alpha * ( reward + self.gamma * Q_next - self.Q[state][action])
         self.pi = self.epsilon_greedy(self.Q) # NOTE: A little inefficient as it rebuilds the dictionaries from scratch
