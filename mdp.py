@@ -63,16 +63,23 @@ class StudentMDP:
                     }
     }
 
+    def __init__(self, verbose):
+        self.verbose = True
+        self.ep = 0
+
     def reset(self):
-        self.state = "Class 1"
+        self.ep += 1
         self.t = 0
+        self.state = "Class 1"
+        if self.verbose:
+            print("="*27+f" EPISODE {str(self.ep).rjust(3)} "+"="*27)
         return self.state
 
-    def step(self, action, verbose=False):
+    def step(self, action):
         reward = self.reward(self.state, action)
         next_state = self.next_state(self.state, action)
         done = (next_state == "Asleep")
-        if verbose:
+        if self.verbose:
             if self.t == 0:
                 print("| Time  | State    | Action         | Reward | Next state | Done  |")
                 print("|-------|----------|----------------|--------|------------|-------|")
@@ -90,9 +97,6 @@ class StudentMDP:
         self._check_valid(action)
         nextstate_options = self.action_space[state][action][1]
         return choice(list(nextstate_options.keys()), p=list(nextstate_options.values()))
-    
-    def random_action(self):
-        return choice(list(self.action_space[self.state]))
 
     def _check_valid(self, action):
         assert action in self.action_space[self.state], f"Invalid action '{action}' in state '{self.state}'"
