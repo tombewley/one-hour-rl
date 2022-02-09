@@ -4,7 +4,7 @@ from agent import Agent, QLearningAgent
 
 mdp = StudentMDP(verbose=True)
 
-if True:
+if False:
     # Default policy shown in images/student-mdp.png
     agent = Agent(mdp.action_space) 
     agent.pi = {
