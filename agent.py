@@ -49,4 +49,4 @@ class QLearningAgent(Agent):
         self.Q[state][action] += self.alpha * ( reward
                                               + self.gamma * self.Q[next_state][self.greedy(self.Q[next_state])]
                                               - self.Q[state][action])
-        self.pi = self.epsilon_greedy(self.Q)
+        self.pi = self.epsilon_greedy(self.Q) # NOTE: A little inefficient as rebuilds the dictionaries from scratch
