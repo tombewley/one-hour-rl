@@ -64,7 +64,7 @@ class StudentMDP:
     }
 
     def __init__(self, verbose):
-        self.verbose = True
+        self.verbose = verbose
         self.ep = 0
 
     def reset(self):
