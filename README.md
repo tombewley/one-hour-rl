@@ -1,5 +1,7 @@
 # One-hour Reinforcement Learning
 
+TODO: Use https://mybinder.org for interactivity?
+
 ![The student MDP](images/student-mdp.png?raw=true "The student MDP")
 
 ## Content Structure
