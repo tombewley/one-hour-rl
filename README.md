@@ -1,6 +1,8 @@
 # One-hour Reinforcement Learning
 
-TODO: Use https://mybinder.org for interactivity?
+```
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tombewley/one-hour-rl/HEAD)
+```
 
 - [1 | Markov Decision Processes: A Model of Sequential Decision Making](1_markov-decision-processes.ipynb)
 
