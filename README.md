@@ -2,16 +2,10 @@
 
 TODO: Use https://mybinder.org for interactivity?
 
-![The student MDP](images/student-mdp.png?raw=true "The student MDP")
+- [1 | Markov Decision Processes: A Model of Sequential Decision Making](1_markov-decision-processes.ipynb)
 
-## Content Structure
+- [2 | Policy Evaluation: The Temporal Difference Method](2_policy-evaluation.ipynb)
 
-- High-level motivation: sequential decision-making
-- The MDP formalism 
-    - Mathematical notation *and* Gym as an implementation convention
-    - Introduce the Student MDP using diagram and Gym class
-- (Maybe) policy evaluation of a stationary policy
-- Q-learning with epsilon-greedy
-- Deep Q-learning
-- Things we've missed out
-    - Monte Carlo, exploration strategies, continuous actions, policy gradient, model-based, ...
+- [3 | Policy Improvement: The Q-learning Algorithm](3_policy-improvement.ipynb)
+
+- [4 | Going Deep](4_going-deep.ipynb)
