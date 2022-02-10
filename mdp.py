@@ -73,16 +73,14 @@ class StudentMDP:
         self.state = "Class 1"
         if self.verbose:
             print("="*27+f" EPISODE {str(self.ep).rjust(3)} "+"="*27)
+            self.print_header()
         return self.state
 
     def step(self, action):
         reward = self.reward(self.state, action)
         next_state = self.next_state(self.state, action)
         done = (next_state == "Asleep")
-        if self.verbose:
-            if self.t == 0:
-                print("| Time  | State    | Action         | Reward | Next state | Done  |")
-                print("|-------|----------|----------------|--------|------------|-------|")
+        if self.verbose:                
             print((f"| {str(self.t).ljust(5)} | {self.state.ljust(8)} | {action.ljust(14)} |"
                    f"{str(reward).rjust(5).ljust(7)} | {next_state.ljust(10)} | {str(done).ljust(5)} |"))
         self.state = next_state
@@ -90,13 +88,17 @@ class StudentMDP:
         return self.state, reward, done, {}
 
     def reward(self, state, action):
-        self._check_valid(action)
+        self.check_valid(state, action)
         return self.action_space[state][action][0]
 
     def next_state(self, state, action):
-        self._check_valid(action)
+        self.check_valid(state, action)
         nextstate_options = self.action_space[state][action][1]
         return choice(list(nextstate_options.keys()), p=list(nextstate_options.values()))
 
-    def _check_valid(self, action):
-        assert action in self.action_space[self.state], f"Invalid action '{action}' in state '{self.state}'"
+    def check_valid(self, state, action):
+        assert action in self.action_space[state], f"Invalid action '{action}' in state '{state}'"
+
+    def print_header(self):
+        print("| Time  | State    | Action         | Reward | Next state | Done  |")
+        print("|-------|----------|----------------|--------|------------|-------|")
