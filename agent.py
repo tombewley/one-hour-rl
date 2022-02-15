@@ -6,8 +6,8 @@ class Agent:
     Base agent class.
     """
 
-    def __init__(self, action_space, epsilon=1.):
-        self.Q = {state: {action: 0. for action in action_space[state]} for state in action_space}
+    def __init__(self, mdp, epsilon=1.):
+        self.Q = {state: {action: 0. for action in spec["actions"]} for state, spec in mdp._spec.items()}
         self.epsilon = epsilon
         self.pi = self.epsilon_greedy(self.Q)
 
@@ -39,8 +39,8 @@ class QLearningAgent(Agent):
     Agent class implementing the Q-learning algorithm. 
     """
 
-    def __init__(self, action_space, epsilon, alpha, gamma):
-        super(QLearningAgent, self).__init__(action_space, epsilon) 
+    def __init__(self, mdp, epsilon, alpha, gamma):
+        super(QLearningAgent, self).__init__(mdp, epsilon) 
         self.alpha = alpha # Learning rate
         self.gamma = gamma # Discount factor
 
