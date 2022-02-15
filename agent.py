@@ -40,7 +40,7 @@ class QLearningAgent(Agent):
     """
 
     def __init__(self, action_space, epsilon, alpha, gamma):
-        Agent.__init__(self, action_space, epsilon)
+        super(QLearningAgent, self).__init__(action_space, epsilon) 
         self.alpha = alpha # Learning rate
         self.gamma = gamma # Discount factor
 
