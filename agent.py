@@ -9,17 +9,17 @@ class Agent:
     def __init__(self, mdp, epsilon=1.):
         self.Q = {state: {action: 0. for action in spec["actions"]} for state, spec in mdp._spec.items()}
         self.epsilon = epsilon
-        self.pi = self.epsilon_greedy(self.Q)
+        self.policy = self.epsilon_greedy(self.Q)
 
     def epsilon_greedy(self, Q):
         """Derive an epsilon-greedy policy from a given value function."""
-        pi = {}
+        policy = {}
         for state in Q:
-            pi[state] = {}
+            policy[state] = {}
             epsilon_per_action = self.epsilon / len(Q[state])
-            for action in Q[state]: pi[state][action] = epsilon_per_action
-            pi[state][self.greedy(Q[state])] += (1 - self.epsilon)
-        return pi
+            for action in Q[state]: policy[state][action] = epsilon_per_action
+            policy[state][self.greedy(Q[state])] += (1 - self.epsilon)
+        return policy
 
     def greedy(_, Q_state):
         """Return the greedy action from a dictionary of Q values for a given state."""
@@ -27,7 +27,7 @@ class Agent:
 
     def act(self, state):
         """Sample an action from the current policy."""
-        return choice(list(self.pi[state].keys()), p=list(self.pi[state].values()))
+        return choice(list(self.policy[state].keys()), p=list(self.policy[state].values()))
 
     def learn(self, state, action, reward, next_state, done):
         """Not implemented for the base class."""
@@ -48,4 +48,4 @@ class QLearningAgent(Agent):
         """Update the value function and policy using information from the latest transition."""
         Q_next = 0. if done else self.Q[next_state][self.greedy(self.Q[next_state])]
         self.Q[state][action] += self.alpha * ( reward + self.gamma * Q_next - self.Q[state][action])
-        self.pi = self.epsilon_greedy(self.Q) # NOTE: A little inefficient as it rebuilds the dictionaries from scratch
+        self.policy = self.epsilon_greedy(self.Q) # NOTE: A little inefficient as it rebuilds the dictionaries from scratch
