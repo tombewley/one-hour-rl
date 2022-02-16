@@ -1,4 +1,4 @@
-from numpy.random import rand, choice
+from numpy.random import choice
 
 
 def sample_from_dict(dict_):
@@ -12,7 +12,6 @@ class TabularMDP:
 
     {[str: state]: {
         "p_init": [float: marginal probability of initialising in 'state'],
-        "p_done": [float: probability of terminating when in 'state'],
         "actions": {
             [str: action]: (
                 [float: reward for taking 'action' in 'state',
@@ -26,6 +25,8 @@ class TabularMDP:
         },
     ... more states ...
     }
+
+    Note that a state is taken as terminal if its action space is empty.
     """
 
     def __init__(self, verbose=False):
@@ -44,7 +45,7 @@ class TabularMDP:
     def step(self, action):
         reward = self.reward(self.state, action)
         next_state = self.sample_next_state(self.state, action)
-        done = self.sample_done(next_state)
+        done = self.is_terminal(next_state)
         if self.verbose:                
             print((f"| {str(self.t).ljust(5)} | {self.state.ljust(8)} | {action.ljust(14)} |"
                    f"{str(reward).rjust(5).ljust(7)} | {next_state.ljust(10)} | {str(done).ljust(5)} |"))
@@ -53,16 +54,10 @@ class TabularMDP:
         return self.state, reward, done, {}
 
     def initial_probs(self):
-        return {k: v["p_init"] for k, v in self._spec.items()} 
+        return {state: v["p_init"] for state, v in self._spec.items()} 
 
     def sample_initial_state(self):
         return sample_from_dict(self.initial_probs())
-
-    def done_probs(self):
-        return {k: v["p_done"] for k, v in self._spec.items()} 
-
-    def sample_done(self, state):
-        return rand() < self._spec[state]["p_done"]
 
     def action_space(self, state):
         return set(self._spec[state]["actions"].keys())
@@ -75,6 +70,12 @@ class TabularMDP:
 
     def sample_next_state(self, state, action):
         return sample_from_dict(self.transition_probs(state, action))
+
+    def is_terminal(self, state):
+        return not self._spec[state]["actions"] 
+
+    def terminal_states(self):
+        return {state for state in self._spec if self.is_terminal(state)} 
 
     def print_header(self):
         print("| Time  | State    | Action         | Reward | Next state | Done  |")
@@ -93,7 +94,6 @@ class StudentMDP(TabularMDP):
     # |------------|------------------|---------|------------------| 
        "Class 1": {
         "p_init": 1.,
-        "p_done": 0.,
         "actions": {
                     "Study":          ( -2.,    {
                                                  "Class 2": 1.
@@ -104,7 +104,6 @@ class StudentMDP(TabularMDP):
                     }},
        "Class 2": {
         "p_init": 0.,
-        "p_done": 0.,
         "actions": {
                     "Study":          ( -2.,    {
                                                  "Class 3": 1.
@@ -115,7 +114,6 @@ class StudentMDP(TabularMDP):
                     }},
        "Class 3": {
         "p_init": 0.,
-        "p_done": 0.,
         "actions": {
                     "Study":          ( 10.,    {
                                                  "Pass": 1.
@@ -126,7 +124,6 @@ class StudentMDP(TabularMDP):
                     }},
        "Facebook": {
         "p_init": 0.,
-        "p_done": 0.,
         "actions": {
                     "Keep scrolling": ( -1.,    {
                                                  "Facebook": 1.
@@ -137,7 +134,6 @@ class StudentMDP(TabularMDP):
                     }},
        "Pub": {
         "p_init": 0.,
-        "p_done": 0.,
         "actions": {
                     "Have a pint":    ( -2.,    {
                                                  "Class 1": 0.2,
@@ -147,7 +143,6 @@ class StudentMDP(TabularMDP):
                     }},
        "Pass": {
         "p_init": 0.,
-        "p_done": 0.,
         "actions": {
                     "Fall asleep":    ( 0.,     {
                                                  "Asleep": 1.
@@ -155,10 +150,6 @@ class StudentMDP(TabularMDP):
                    }},
        "Asleep": {
         "p_init": 0.,
-        "p_done": 1.,
-        "actions": {
-                    "Stay asleep":    ( 0.,     {
-                                                 "Asleep": 1.
-                                                 })
-                    }}
+        "actions": {}
+                    }
     }

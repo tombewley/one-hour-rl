@@ -16,9 +16,11 @@ class Agent:
         policy = {}
         for state in Q:
             policy[state] = {}
-            epsilon_per_action = self.epsilon / len(Q[state])
-            for action in Q[state]: policy[state][action] = epsilon_per_action
-            policy[state][self.greedy(Q[state])] += (1 - self.epsilon)
+            num_actions = len(Q[state])
+            if num_actions > 0:
+                epsilon_per_action = self.epsilon / num_actions
+                for action in Q[state]: policy[state][action] = epsilon_per_action
+                policy[state][self.greedy(Q[state])] += (1 - self.epsilon)
         return policy
 
     def greedy(_, Q_state):
