@@ -58,6 +58,9 @@ class TabularMDP:
     def sample_initial_state(self):
         return sample_from_dict(self.initial_probs())
 
+    def done_probs(self):
+        return {k: v["p_done"] for k, v in self._spec.items()} 
+
     def sample_done(self, state):
         return rand() < self._spec[state]["p_done"]
 
