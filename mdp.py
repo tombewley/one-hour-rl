@@ -28,7 +28,7 @@ class TabularMDP:
     }
     """
 
-    def __init__(self, verbose):
+    def __init__(self, verbose=False):
         self.verbose = verbose
         self.ep = 0
 
