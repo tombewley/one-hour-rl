@@ -26,14 +26,8 @@ class Agent:
 
         self.memory = ReplayBuffer(mem_size, input_dims, n_actions)
 
-        self.q_eval = DeepQNetwork(self.lr, self.n_actions,
+        self.q_eval = DeepQNetwork(lr=self.lr, n_actions=self.n_actions,
                                    name=self.env_name+'_q_eval',
-                                   input_dims=self.input_dims,
-                                   chkpt_dir=self.chkpt_dir
-                                   )
-
-        self.q_next = DeepQNetwork(self.lr, self.n_actions,
-                                   name=self.env_name+'_q_next',
                                    input_dims=self.input_dims,
                                    chkpt_dir=self.chkpt_dir
                                    )
@@ -72,13 +66,6 @@ class Agent:
 
         return states, actions, rewards, states_, dones
 
-    def replace_target_network(self):
-        '''
-        updates target q network to match evaluation network after some number of timesteps
-        '''
-        if self.learn_step_counter % self.replace_target_cnt == 0:
-            self.q_next.load_state_dict(self.q_eval.state_dict())
-
     def save_models(self):
         self.q_next.save_checkpoint()
         self.q_eval.save_checkpoint()
@@ -86,15 +73,6 @@ class Agent:
     def load_models(self):
         self.q_next.load_checkpoint()
         self.q_eval.load_checkpoint()
-
-    def decrement_epsilon(self):
-        '''
-        reduces agent exploration parameter through time
-        '''
-        if self.epsilon > self.eps_min:
-            self.epsilon = self.epsilon - self.eps_dec
-        else:
-            self.epsilon = self.eps_min
 
     def learn(self):
         '''
@@ -105,23 +83,21 @@ class Agent:
 
         self.q_eval.optimizer.zero_grad()
 
-        self.replace_target_network()
-
         states, actions, rewards, states_, dones = self.sample_memory()
         indices = np.arange(self.batch_size)
 
         q_pred = self.q_eval.forward(states)[indices, actions]
-        q_next = self.q_next(states_).max(dim=1)[0]
-
+        q_next = self.q_eval(states_)
         q_next[dones] = 0.0
-        q_target = rewards + self.gamma*q_next
+
+        q_target = rewards + self.gamma * T.max(q_next, dim=1)[0]
 
         loss = self.q_eval.loss(q_target, q_pred).to(self.q_eval.device)
         loss.backward()
         self.q_eval.optimizer.step()
         self.learn_step_counter += 1
 
-        self.decrement_epsilon()
+        self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min else self.eps_min
 
 
 
