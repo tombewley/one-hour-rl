@@ -85,8 +85,7 @@ class Agent:
 
         states, actions, rewards, states_, dones = self.sample_memory()
         indices = np.arange(self.batch_size)
-
-        q_pred = self.q_eval.forward(states)[indices, actions]
+        q_pred = self.q_eval.forward(states)[indices, actions.long()]
         q_next = self.q_eval(states_)
         q_next[dones] = 0.0
 
